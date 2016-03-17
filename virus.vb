@@ -10,7 +10,7 @@ history
 w32.hllp.jpginfector, as i named my lame proof-of-concept virus, was written on a fine afternoon of june 13, 2002 because
 i just wanted to make a working proof of my article "Infecting Picture Files : A Desperate Approach"... that lame article
 was written because of my reggae song "Your Kiss, Your Love and Some Pictures" dedicated to my girlfriend... 
-so the root of all the Perrun phenomenon was not the eagerness to achieve fame... the root is LOVE... "Hi Janis!" :)
+so the root of all the Perrun phenomenon was not the eagerness to achieve fame... the root is LOVE... "Hi Yelena!" :)
 
 after the finishing touches to the binary, i submitted it to av sites... trend, symantec, mcafee.. (can't clearly remember
 if i submitted it to avp, f-secure and sophos).... then i rested and ate my dinner.... i checked my mail again then
