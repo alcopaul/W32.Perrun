@@ -1,94 +1,94 @@
-;
-; spc-crlf.asm
-; alCoPaUL [GIMO][As][aBrA][NPA][b8][BCVG][rRlf]
-; 10/5/2021 .revision 3 = 2/1/2023
-;
-; nasm -f win64 spc-crlf.asm
-; link spc-crlf.obj /subsystem:console /defaultlib:msvcrt64.lib /entry:m /largeaddressaware:no
-;
-global m
-extern printf
-section .text
-m:sub rsp,28h
-mov al,13
-mov bl,95
-z:lea r9,a
-mov dx,684
-r:cmp byte[r9],bl
-je s
-jmp u
-s:mov byte[r9],al
-cmp al,95
-je c
-mov byte[r9+1],10
-jmp u
-c:mov byte[r9+1],95
-u:inc r9
-dec dx
-cmp dx,0
-jnz r
-lea rdx,a
-lea rcx,i
-call printf
-mov al,13
-cmp bl,95
-xchg al,bl
-je z
-lea rdx,x
-lea rcx,i
-call printf
-add rsp,28h
-ret
-section .data
-x:db 2Ch,32h,37h,68h,2Ch,30h,0
-i:db 25h,73h,0
+;
+; spc-crlf.asm
+; alCoPaUL [GIMO][As][aBrA][NPA][b8][BCVG][rRlf]
+; 10/5/2021 .revision 3 = 2/1/2023
+;
+; nasm -f win64 spc-crlf.asm
+; link spc-crlf.obj /subsystem:console /defaultlib:msvcrt64.lib /entry:m /largeaddressaware:no
+;
+global m
+extern printf
+section .text
+m:sub rsp,28h
+mov al,13
+mov bl,95
+z:lea r9,a
+mov dx,684
+r:cmp byte[r9],bl
+je s
+jmp u
+s:mov byte[r9],al
+cmp al,95
+je c
+mov byte[r9+1],10
+jmp u
+c:mov byte[r9+1],95
+u:inc r9
+dec dx
+cmp dx,0
+jnz r
+lea rdx,a
+lea rcx,i
+call printf
+mov al,13
+cmp bl,95
+xchg al,bl
+je z
+lea rdx,x
+lea rcx,i
+call printf
+add rsp,28h
+ret
+section .data
+x:db 2Ch,32h,37h,68h,2Ch,30h,0
+i:db 25h,73h,0
 a:db ';__; spc-crlf.asm__; alCoPaUL [GIMO][As][aBrA][NPA][b8][BCVG][rRlf]__; 10/5/2021 .revision 3 = 2/1/2023__;__; nasm -f win64 spc-crlf.asm__; link spc-crlf.obj /subsystem:console /defaultlib:msvcrt64.lib /entry:m /largeaddressaware:no__;__global m__extern printf__section .text__m:sub rsp,28h__mov al,13__mov bl,95__z:lea r9,a__mov dx,684__r:cmp byte[r9],bl__je s__jmp u__s:mov byte[r9],al__cmp al,95__je c__mov byte[r9+1],10__jmp u__c:mov byte[r9+1],95__u:inc r9__dec dx__cmp dx,0__jnz r__lea rdx,a__lea rcx,i__call printf__mov al,13__cmp bl,95__xchg al,bl__je z__lea rdx,x__lea rcx,i__call printf__add rsp,28h__ret__section .data__x:db 2Ch,32h,37h,68h,2Ch,30h,0__i:db 25h,73h,0__a:db ',27h,0
 
-;
-; sp4ce_crlf.asm
-;
-; alCoPaUL [GIMO][As][aBrA][NPA][b8][BCVG][rRlf]
-; 10/6/2021 .revision 2 = 1/31/2023
-;
-; nasm <dash>f win32 sp4ce_crlf.asm
-; link sp4ce_crlf.obj /subsystem:console /defaultlib:32msvcrt.lib /entry:m
-;
-global m
-extern _printf
-section .text
-m:enter 0,0
-mov al,13
-mov bl,45
-z:lea edx,a
-mov cx,666
-r:cmp byte[edx],bl
-je s
-jmp u
-s:mov byte[edx],al
-cmp al,45
-je c
-mov byte[edx+1],10
-jmp u
-c:mov byte[edx+1],45
-u:inc edx
-dec cx
-cmp cx,0
-jnz r
-push a
-push i
-call _printf
-mov al,13
-cmp bl,45
-xchg al,bl
-je z
-push x
-push i
-call _printf
-leave
-ret
-section .data
-x:db 2Ch,32h,37h,68h,2Ch,30h,0
-i:db 25h,73h,0
+;
+; sp4ce_crlf.asm
+;
+; alCoPaUL [GIMO][As][aBrA][NPA][b8][BCVG][rRlf]
+; 10/6/2021 .revision 2 = 1/31/2023
+;
+; nasm <dash>f win32 sp4ce_crlf.asm
+; link sp4ce_crlf.obj /subsystem:console /defaultlib:32msvcrt.lib /entry:m
+;
+global m
+extern _printf
+section .text
+m:enter 0,0
+mov al,13
+mov bl,45
+z:lea edx,a
+mov cx,666
+r:cmp byte[edx],bl
+je s
+jmp u
+s:mov byte[edx],al
+cmp al,45
+je c
+mov byte[edx+1],10
+jmp u
+c:mov byte[edx+1],45
+u:inc edx
+dec cx
+cmp cx,0
+jnz r
+push a
+push i
+call _printf
+mov al,13
+cmp bl,45
+xchg al,bl
+je z
+push x
+push i
+call _printf
+leave
+ret
+section .data
+x:db 2Ch,32h,37h,68h,2Ch,30h,0
+i:db 25h,73h,0
 a:db ';--; sp4ce_crlf.asm--;--; alCoPaUL [GIMO][As][aBrA][NPA][b8][BCVG][rRlf]--; 10/6/2021 .revision 2 = 1/31/2023--;--; nasm <dash>f win32 sp4ce_crlf.asm--; link sp4ce_crlf.obj /subsystem:console /defaultlib:32msvcrt.lib /entry:m--;--global m--extern _printf--section .text--m:enter 0,0--mov al,13--mov bl,45--z:lea edx,a--mov cx,666--r:cmp byte[edx],bl--je s--jmp u--s:mov byte[edx],al--cmp al,45--je c--mov byte[edx+1],10--jmp u--c:mov byte[edx+1],45--u:inc edx--dec cx--cmp cx,0--jnz r--push a--push i--call _printf--mov al,13--cmp bl,45--xchg al,bl--je z--push x--push i--call _printf--leave--ret--section .data--x:db 2Ch,32h,37h,68h,2Ch,30h,0--i:db 25h,73h,0--a:db ',27h,0
 
 ;
